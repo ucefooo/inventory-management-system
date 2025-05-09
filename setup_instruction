@@ -8,6 +8,12 @@ This document provides instructions for setting up and running the Inventory Man
 - npm (v7 or higher)
 - PostgreSQL (or any database supported by Prisma)
 
+## database setup
+
+1. pull image postgres and run for container:
+  docker pull postgres:latest
+  docker run --name postgres-db -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=password -e POSTGRES_DB=inventory_db -p 5432:5432 -d postgres
+
 ## Installation Steps
 
 1. Clone the repository:
@@ -25,8 +31,8 @@ This document provides instructions for setting up and running the Inventory Man
    - Create a `.env` file in the project root if it doesn't exist
    - Add the following content (update with your database credentials):
      ```
-     DATABASE_URL="postgresql://username:password@localhost:5432/inventory_db?schema=public"
-     JWT_SECRET="your-super-secret-jwt-key-change-in-production"
+    DATABASE_URL="postgresql://postgres:password@localhost:5432/inventory_db?schema=public"
+    JWT_SECRET="test123"
      ```
 
 4. Database setup:
@@ -96,6 +102,9 @@ GET /items
 ```
 GET /items/all
 Headers: Authorization: Bearer <jwt_token>
+key=Authorization
+value=Bearer ******
+//replace ***** by jwt token u got when u logged in
 ```
 
 #### Get single item by ID
