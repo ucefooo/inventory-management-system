@@ -7,14 +7,12 @@ import { UpdateItemDto } from './dto/update-item.dto';
 export class ItemsService {
   constructor(private prisma: PrismaService) {}
 
-  // Create a new item (admin only)
   async create(createItemDto: CreateItemDto) {
     return this.prisma.item.create({
       data: createItemDto,
     });
   }
 
-  // Get all items (admin sees all, customers see only available)
   async findAll(showAll = false) {
     if (showAll) {
       return this.prisma.item.findMany({
@@ -22,7 +20,6 @@ export class ItemsService {
       });
     }
     
-    // For customers, only show available items
     return this.prisma.item.findMany({
       where: { 
         available: true,
@@ -32,7 +29,6 @@ export class ItemsService {
     });
   }
 
-  // Get a specific item by ID
   async findOne(id: string) {
     const item = await this.prisma.item.findUnique({
       where: { id },
@@ -41,13 +37,10 @@ export class ItemsService {
     if (!item) {
       throw new NotFoundException(`Item with ID ${id} not found`);
     }
-
     return item;
   }
 
-  // Update an item (admin only)
   async update(id: string, updateItemDto: UpdateItemDto) {
-    // Check if item exists
     await this.findOne(id);
 
     return this.prisma.item.update({
@@ -56,9 +49,7 @@ export class ItemsService {
     });
   }
 
-  // Delete an item (admin only)
   async remove(id: string) {
-    // Check if item exists
     await this.findOne(id);
 
     return this.prisma.item.delete({

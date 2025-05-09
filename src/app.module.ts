@@ -21,7 +21,6 @@ import { RolesGuard } from './auth/guards/roles.guard';
   controllers: [AppController],
   providers: [
     AppService,
-    // Uncomment these if you want to apply guards globally
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,

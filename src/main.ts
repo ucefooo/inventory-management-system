@@ -5,7 +5,6 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   
-  // Global validation pipe
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -14,10 +13,8 @@ async function bootstrap() {
     }),
   );
   
-  // Enable CORS
   app.enableCors();
   
-  // Start server
   await app.listen(3000);
   console.log(`Application is running on: ${await app.getUrl()}`);
 }
