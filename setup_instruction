@@ -1,0 +1,135 @@
+# Inventory Management System - Setup Guide
+
+This document provides instructions for setting up and running the Inventory Management System backend.
+
+## Prerequisites
+
+- Node.js (v16 or higher)
+- npm (v7 or higher)
+- PostgreSQL (or any database supported by Prisma)
+
+## Installation Steps
+
+1. Clone the repository:
+   ```bash
+   git clone <repository-url>
+   cd inventory-management-system
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Configure environment variables:
+   - Create a `.env` file in the project root if it doesn't exist
+   - Add the following content (update with your database credentials):
+     ```
+     DATABASE_URL="postgresql://username:password@localhost:5432/inventory_db?schema=public"
+     JWT_SECRET="your-super-secret-jwt-key-change-in-production"
+     ```
+
+4. Database setup:
+   ```bash
+   # Create database tables based on the schema
+   npx prisma migrate dev --name init
+   
+   # Seed the database with initial data
+   npx prisma db seed
+   ```
+
+5. Start the application:
+   ```bash
+   # Development mode
+   npm run start:dev
+   
+   # Production mode
+   npm run build
+   npm run start:prod
+   ```
+
+6. The API will be available at `http://localhost:3000`
+
+## Default Users
+
+After seeding the database, you'll have access to these accounts:
+
+- Admin User:
+  - Email: `admin@example.com`
+  - Password: `admin123`
+
+- Customer User:
+  - Email: `customer@example.com`
+  - Password: `customer123`
+
+## API Documentation
+
+### Authentication Endpoints
+
+#### Register a new user
+```
+POST /auth/register
+Body: {
+  "email": "user@example.com",
+  "password": "password",
+  "name": "User Name"
+}
+```
+
+#### Login
+```
+POST /auth/login
+Body: {
+  "email": "user@example.com",
+  "password": "password"
+}
+```
+
+### Item Endpoints
+
+#### Get all available items (public)
+```
+GET /items
+```
+
+#### Get all items including unavailable (admin only)
+```
+GET /items/all
+Headers: Authorization: Bearer <jwt_token>
+```
+
+#### Get single item by ID
+```
+GET /items/:id
+```
+
+#### Create new item (admin only)
+```
+POST /items
+Headers: Authorization: Bearer <jwt_token>
+Body: {
+  "name": "Item Name",
+  "price": 99.99,
+  "description": "Item description",
+  "quantity": 10
+}
+```
+
+#### Update item (admin only)
+```
+PUT /items/:id
+Headers: Authorization: Bearer <jwt_token>
+Body: {
+  "name": "Updated Name",
+  "price": 89.99,
+  "description": "Updated description",
+  "quantity": 5,
+  "available": true
+}
+```
+
+#### Delete item (admin only)
+```
+DELETE /items/:id
+Headers: Authorization: Bearer <jwt_token>
+```

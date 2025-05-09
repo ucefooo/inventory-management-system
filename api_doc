@@ -1,0 +1,297 @@
+# Inventory Management System API Documentation
+
+## Overview
+
+This API provides endpoints for managing inventory items with two types of user roles:
+- **Administrators**: Can add, view, update, and delete inventory items
+- **Customers**: Can only view available items
+
+## Authentication
+
+The API uses JWT (JSON Web Token) for authentication. Protected routes require a valid token in the Authorization header.
+
+### Authentication Endpoints
+
+#### Register a new user
+
+```
+POST /auth/register
+```
+
+**Request Body:**
+```json
+{
+  "email": "user@example.com",
+  "password": "password123",
+  "name": "User Name"
+}
+```
+
+**Response:**
+```json
+{
+  "token": "jwt_token",
+  "user": {
+    "id": "user_id",
+    "email": "user@example.com",
+    "name": "User Name",
+    "role": "CUSTOMER"
+  }
+}
+```
+
+#### Login
+
+```
+POST /auth/login
+```
+
+**Request Body:**
+```json
+{
+  "email": "user@example.com",
+  "password": "password123"
+}
+```
+
+**Response:**
+```json
+{
+  "token": "jwt_token",
+  "user": {
+    "id": "user_id",
+    "email": "user@example.com",
+    "name": "User Name",
+    "role": "CUSTOMER"
+  }
+}
+```
+
+## Item Endpoints
+
+### 1. Get All Available Items (Public)
+
+Returns all items that are available and have quantity greater than 0.
+
+```
+GET /items
+```
+
+**Response:**
+```json
+[
+  {
+    "id": "item_id",
+    "name": "Laptop",
+    "price": 999.99,
+    "description": "High-performance laptop with SSD",
+    "quantity": 10,
+    "available": true,
+    "createdAt": "2023-08-31T12:00:00.000Z",
+    "updatedAt": "2023-08-31T12:00:00.000Z"
+  },
+  ...
+]
+```
+
+### 2. Get All Items (Admin Only)
+
+Returns all items regardless of availability status.
+
+```
+GET /items/all
+```
+
+**Headers:**
+```
+Authorization: Bearer <jwt_token>
+```
+
+**Response:**
+```json
+[
+  {
+    "id": "item_id",
+    "name": "Laptop",
+    "price": 999.99,
+    "description": "High-performance laptop with SSD",
+    "quantity": 10,
+    "available": true,
+    "createdAt": "2023-08-31T12:00:00.000Z",
+    "updatedAt": "2023-08-31T12:00:00.000Z"
+  },
+  {
+    "id": "item_id_2",
+    "name": "Keyboard",
+    "price": 89.99,
+    "description": "Mechanical gaming keyboard",
+    "quantity": 0,
+    "available": false,
+    "createdAt": "2023-08-31T12:00:00.000Z",
+    "updatedAt": "2023-08-31T12:00:00.000Z"
+  },
+  ...
+]
+```
+
+### 3. Get Item by ID
+
+Returns a specific item by its ID.
+
+```
+GET /items/:id
+```
+
+**Response:**
+```json
+{
+  "id": "item_id",
+  "name": "Laptop",
+  "price": 999.99,
+  "description": "High-performance laptop with SSD",
+  "quantity": 10,
+  "available": true,
+  "createdAt": "2023-08-31T12:00:00.000Z",
+  "updatedAt": "2023-08-31T12:00:00.000Z"
+}
+```
+
+### 4. Create Item (Admin Only)
+
+Creates a new inventory item.
+
+```
+POST /items
+```
+
+**Headers:**
+```
+Authorization: Bearer <jwt_token>
+```
+
+**Request Body:**
+```json
+{
+  "name": "Monitor",
+  "price": 299.99,
+  "description": "27-inch 4K monitor",
+  "quantity": 5
+}
+```
+
+**Response:**
+```json
+{
+  "id": "new_item_id",
+  "name": "Monitor",
+  "price": 299.99,
+  "description": "27-inch 4K monitor",
+  "quantity": 5,
+  "available": true,
+  "createdAt": "2023-08-31T12:00:00.000Z",
+  "updatedAt": "2023-08-31T12:00:00.000Z"
+}
+```
+
+### 5. Update Item (Admin Only)
+
+Updates an existing inventory item.
+
+```
+PUT /items/:id
+```
+
+**Headers:**
+```
+Authorization: Bearer <jwt_token>
+```
+
+**Request Body:**
+```json
+{
+  "price": 279.99,
+  "quantity": 10,
+  "available": true
+}
+```
+
+**Response:**
+```json
+{
+  "id": "item_id",
+  "name": "Monitor",
+  "price": 279.99,
+  "description": "27-inch 4K monitor",
+  "quantity": 10,
+  "available": true,
+  "createdAt": "2023-08-31T12:00:00.000Z",
+  "updatedAt": "2023-08-31T13:00:00.000Z"
+}
+```
+
+### 6. Delete Item (Admin Only)
+
+Deletes an inventory item.
+
+```
+DELETE /items/:id
+```
+
+**Headers:**
+```
+Authorization: Bearer <jwt_token>
+```
+
+**Response:**
+```json
+{
+  "id": "deleted_item_id",
+  "name": "Monitor",
+  "price": 279.99,
+  "description": "27-inch 4K monitor",
+  "quantity": 10,
+  "available": true,
+  "createdAt": "2023-08-31T12:00:00.000Z",
+  "updatedAt": "2023-08-31T13:00:00.000Z"
+}
+```
+
+## Error Handling
+
+The API returns appropriate HTTP status codes along with error messages:
+
+- **400 Bad Request**: Invalid input data
+- **401 Unauthorized**: Missing or invalid authentication token
+- **403 Forbidden**: Insufficient permissions for the requested action
+- **404 Not Found**: Resource not found
+- **500 Internal Server Error**: Server-side error
+
+Example error response:
+```json
+{
+  "statusCode": 400,
+  "message": ["price must be a positive number"],
+  "error": "Bad Request"
+}
+```
+
+## Implementation Details
+
+### Technologies Used
+- **Framework**: NestJS
+- **Database ORM**: Prisma
+- **Authentication**: JWT with Passport
+- **Validation**: Class Validator
+
+### Security Features
+- Password hashing using bcrypt
+- JWT token-based authentication
+- Role-based access control
+- Input validation for all API endpoints
+
+### Database Schema
+The application uses two main entities:
+1. **User**: Stores user information and roles
+2. **Item**: Stores inventory item details
+
+The database schema is designed to support the role-based access requirements while maintaining data integrity through appropriate relationships and constraints.
