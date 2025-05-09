@@ -4,7 +4,6 @@ import * as bcrypt from 'bcrypt';
 const prisma = new PrismaClient();
 
 async function main() {
-  // Create admin user
   await prisma.user.upsert({
     where: { email: 'admin@example.com' },
     update: {},
@@ -16,7 +15,6 @@ async function main() {
     },
   });
 
-  // Create customer user
   await prisma.user.upsert({
     where: { email: 'customer@example.com' },
     update: {},
@@ -28,7 +26,6 @@ async function main() {
     },
   });
 
-  // Create sample items
   const items = [
     {
       name: 'Laptop',
